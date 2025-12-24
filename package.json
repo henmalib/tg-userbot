@@ -2,6 +2,8 @@
     "name": "tg-userbot",
     "type": "module",
     "version": "0.0.1",
+    "author": "henmalib",
+    "private": true,
     "packageManager": "pnpm@10.20.0",
     "license": "MIT",
     "scripts": {
