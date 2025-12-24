@@ -11,7 +11,7 @@ const createCommandHelp = (commands: Command[]) => {
 
     for (const command of commands) {
         stringBuilder.push(
-            `* ${command.usage || command.command} - ${command.description || "No description provided"}`,
+            `* **${command.usage || command.command}** - ${command.description || "No description provided"}`,
         );
     }
 
