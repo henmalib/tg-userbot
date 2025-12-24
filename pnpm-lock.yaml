@@ -11,6 +11,9 @@ importers:
       '@mtcute/dispatcher':
         specifier: ^0.27.4
         version: 0.27.4
+      '@mtcute/markdown-parser':
+        specifier: ^0.27.4
+        version: 0.27.4
       '@mtcute/node':
         specifier: ^0.27.4
         version: 0.27.4

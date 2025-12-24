@@ -1,4 +1,4 @@
-import antfu from '@antfu/eslint-config'
+import antfu from "@antfu/eslint-config";
 
 export default antfu({
     stylistic: {
@@ -7,13 +7,13 @@ export default antfu({
     typescript: true,
     yaml: false,
     rules: {
-        'curly': ['error', 'multi-line'],
-        'style/brace-style': ['error', '1tbs', { allowSingleLine: true }],
-        'style/quotes': ['error', 'single', { avoidEscape: true }],
-        'antfu/if-newline': 'off',
-        'style/max-statements-per-line': ['error', { max: 2 }],
-        'no-console': 'off',
-        'node/prefer-global/process': 'off',
-        'antfu/no-top-level-await': 'off',
+        curly: ["error", "multi-line"],
+        "style/brace-style": ["error", "1tbs", { allowSingleLine: true }],
+        "style/quotes": ["error", "single", { avoidEscape: true }],
+        "antfu/if-newline": "off",
+        "style/max-statements-per-line": ["error", { max: 2 }],
+        "no-console": "off",
+        "node/prefer-global/process": "off",
+        "antfu/no-top-level-await": "off",
     },
-})
+});
