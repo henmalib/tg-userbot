@@ -1,4 +1,5 @@
 import {
+    Dispatcher,
     filters,
     type MessageContext,
     type NewMessageHandler,
@@ -7,6 +8,7 @@ import {
 } from "@mtcute/dispatcher";
 import { env } from "./env.js";
 import { state } from "./state.js";
+import { MaybePromise, TextWithEntities } from "@mtcute/node";
 
 type AnyMsgFilter =
     | UpdateFilter<MessageContext, any, any>
@@ -26,10 +28,28 @@ type CtxForFilter<F> = [F] extends [undefined]
 
 type StateArg<S> = [S] extends [never] ? never : UpdateState<S & object>;
 
-type HandlerForFilter<F, S = never> = NewMessageHandler<
-    CtxForFilter<F>,
-    StateArg<S>
->["callback"];
+type WithReturnType<T, R> = T extends (...args: infer A) => any
+    ? (...args: A) => R
+    : T;
+
+export enum CommandReturnType {
+    EDIT,
+    REPLY,
+    NEW,
+    DELETE,
+    SILENT_DELETE,
+    SAVED_MESSAGES,
+}
+
+interface CommandResult {
+    type: CommandReturnType;
+    text: string | TextWithEntities;
+}
+
+type HandlerForFilter<F, State = never> = WithReturnType<
+    NewMessageHandler<CtxForFilter<F>, StateArg<State>>["callback"],
+    MaybePromise<CommandResult>
+>;
 
 export interface Command<F extends AnyMsgFilter = undefined, State = never> {
     command: string;
@@ -49,8 +69,10 @@ export interface Module<C extends Command> {
     description?: string;
 
     commands: C[];
+    events?: ReturnType<typeof defineEvent<any, any>>[];
 }
 
+// TODO: dynamically collect commands
 export const defineModule = <M extends Module<any>>(m: M) => m;
 
 export const createRegExpFilter = (command: string) => {
@@ -65,4 +87,37 @@ export const findCommandsByName = (name: string) => {
     return commands.filter(
         (c) => c.command.toLowerCase() === name.toLowerCase(),
     );
+};
+
+export type AvaliableEvents = Extract<keyof Dispatcher<never>, `on${string}`>;
+
+type EventHandlerType<E extends AvaliableEvents> = Parameters<
+    Dispatcher<never>[E]
+>[0];
+
+type EventFilteredHandlerType<E extends AvaliableEvents> =
+    Dispatcher<never>[E] extends {
+        (filter: any, handler: infer H, ...args: any[]): any;
+    }
+        ? H
+        : EventHandlerType<E>;
+
+export interface Event<E extends AvaliableEvents, F = undefined> {
+    name: E;
+    filter?: F;
+    handler: EventFilteredHandlerType<E>;
+}
+
+export const defineEvent = <E extends AvaliableEvents, F = undefined>(
+    e: Event<E, F>,
+) => e;
+
+export const respond = (
+    text: string | TextWithEntities,
+    type: CommandReturnType = CommandReturnType.EDIT,
+): CommandResult => {
+    return {
+        text,
+        type,
+    };
 };

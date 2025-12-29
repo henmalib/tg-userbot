@@ -7,6 +7,7 @@ export const collectModules = async () => {
 
     const moduleList = readdirSync(dir);
 
+    // TODO: add handlers of unknown modules
     const modules = await Promise.all(
         moduleList.map((m) => import(join(dir, m))),
     );

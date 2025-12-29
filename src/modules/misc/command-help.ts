@@ -4,6 +4,7 @@ import {
     createRegExpFilter,
     defineCommand,
     findCommandsByName,
+    respond,
 } from "../../command.helper.js";
 
 const createCommandHelp = (commands: Command[]) => {
@@ -28,8 +29,6 @@ export default defineCommand({
         const commands = findCommandsByName(msg.match[1]);
         const message = createCommandHelp(commands);
 
-        await msg.edit({
-            text: md(message),
-        });
+        return respond(md(message));
     },
 });

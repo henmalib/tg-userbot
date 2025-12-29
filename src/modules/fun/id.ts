@@ -1,5 +1,9 @@
 import { md } from "@mtcute/markdown-parser";
-import { createRegExpFilter, defineCommand } from "../../command.helper.js";
+import {
+    createRegExpFilter,
+    defineCommand,
+    respond,
+} from "../../command.helper.js";
 import { getAffectedUser } from "../../utils.js";
 
 export default defineCommand({
@@ -16,8 +20,6 @@ export default defineCommand({
             builder.push(`Affected UserId: \`${user}\``);
         }
 
-        await msg.edit({
-            text: md(builder.join("\n")),
-        });
+        return respond(md(builder.join("\n")));
     },
 });

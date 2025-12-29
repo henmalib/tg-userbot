@@ -3,6 +3,7 @@ import {
     Command,
     createRegExpFilter,
     defineCommand,
+    respond,
 } from "../../command.helper.js";
 import { state } from "../../state.js";
 
@@ -55,8 +56,6 @@ export default defineCommand({
     async handler(msg) {
         const message = createHelp();
 
-        await msg.edit({
-            text: md(message),
-        });
+        return respond(md(message));
     },
 });
