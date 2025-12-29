@@ -6,7 +6,7 @@ import {
     type UpdateFilter,
     type UpdateState,
 } from "@mtcute/dispatcher";
-import { env } from "./env.js";
+import { config, env } from "./env.js";
 import { state } from "./state.js";
 import { MaybePromise, TextWithEntities } from "@mtcute/node";
 
@@ -33,15 +33,15 @@ type WithReturnType<T, R> = T extends (...args: infer A) => any
     : T;
 
 export enum CommandReturnType {
-    EDIT,
-    REPLY,
-    NEW,
-    DELETE,
-    SILENT_DELETE,
-    SAVED_MESSAGES,
+    EDIT = "edit",
+    REPLY = "reply",
+    NEW = "new",
+    DELETE = "delete",
+    SILENT_DELETE = "silent-delete",
+    SAVED_MESSAGES = "saved-message",
 }
 
-interface CommandResult {
+export interface CommandResult {
     type: CommandReturnType;
     text: string | TextWithEntities;
 }
@@ -76,7 +76,7 @@ export interface Module<C extends Command> {
 export const defineModule = <M extends Module<any>>(m: M) => m;
 
 export const createRegExpFilter = (command: string) => {
-    const regexp = new RegExp(`^\\${env.BOT_PREFIX}${command}`, "i");
+    const regexp = new RegExp(`^\\${config.botPrefix}${command}`, "i");
 
     return filters.regex(regexp);
 };
@@ -114,7 +114,7 @@ export const defineEvent = <E extends AvaliableEvents, F = undefined>(
 
 export const respond = (
     text: string | TextWithEntities,
-    type: CommandReturnType = CommandReturnType.EDIT,
+    type: CommandReturnType = config.defaultResponseType,
 ): CommandResult => {
     return {
         text,
