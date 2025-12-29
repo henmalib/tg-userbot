@@ -1,4 +1,4 @@
 {
     "botPrefix": ";",
-    "defaultResponseType": "reply"
+    "defaultResponseType": "edit"
 }

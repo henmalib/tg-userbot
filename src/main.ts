@@ -1,7 +1,7 @@
 import { Dispatcher, filters } from "@mtcute/dispatcher";
-import { TelegramClient } from "@mtcute/node";
+import { md, TelegramClient, TextWithEntities } from "@mtcute/node";
 
-import { env } from "./env.js";
+import { env, config } from "./env.js";
 import { collectModules } from "./collector.js";
 import { state } from "./state.js";
 import { Command, CommandReturnType, Event } from "./command.helper.js";
@@ -24,7 +24,30 @@ const registerCommand = (command: Command) => {
             ...[filters.me, filters.outgoing, command.filter].filter(Boolean),
         ),
         async (msg, ...args) => {
-            const { type, text } = await command.handler(msg, ...args);
+            let type: CommandReturnType = config.defaultResponseType;
+            let text: string | TextWithEntities = "";
+
+            try {
+                const response = await command.handler(msg, ...args);
+
+                type = response.type;
+                text = response.text;
+            } catch (e) {
+                if (e instanceof Error) {
+                    if (!("message" in e)) {
+                        console.error(e);
+                    }
+
+                    text = md(
+                        `There's an error while running a command:\n\`\`\`\n${"message" in e ? e.message : "Unknown error, please see logs"}\n\`\`\``,
+                    );
+                } else {
+                    console.error(e);
+                    text = md(
+                        "There's an error while running a command:\n\`\`\`\nUnknown error, please see logs\n\`\`\`",
+                    );
+                }
+            }
 
             switch (type) {
                 case CommandReturnType.EDIT:

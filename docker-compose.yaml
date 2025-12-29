@@ -2,7 +2,7 @@ services:
   bot:
     build:
       context: .
-    restart: always
+    restart: unless-stopped
     env_file:
       - .env
     volumes:
